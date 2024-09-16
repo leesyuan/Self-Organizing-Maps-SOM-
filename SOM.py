@@ -7,9 +7,15 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from sklearn.decomposition import PCA
 from minisom import MiniSom
 from sklearn.metrics import silhouette_score, silhouette_samples
+from datetime import date
 
 # Function to run SOM clustering
 def run_som(som_df, som_size, learning_rate, num_iterations):
+    # Add Game_Age_Years if it's missing
+    if 'Game_Age_Years' not in som_df.columns and 'Year' in som_df.columns:
+        som_df['Game_Age_Years'] = date.today().year - som_df['Year']
+        st.write(f"'Game_Age_Years' column added based on the 'Year' column.")
+
     # Select categorical columns and apply one-hot encoding
     categorical_cols = ['Platform', 'Genre', 'Publisher']
     encoder = OneHotEncoder()
