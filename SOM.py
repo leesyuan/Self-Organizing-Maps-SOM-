@@ -19,9 +19,17 @@ def run_som(som_df, som_size, learning_rate, num_iterations):
     # Combine the encoded columns with the original DataFrame
     som_df = pd.concat([som_df.drop(columns=categorical_cols), encoded_df], axis=1)
 
+    # Define numerical columns
+    numerical_cols = ['Year', 'NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Global_Sales', 'Game_Age_Years']
+    
+    # Check if the necessary numerical columns exist in the DataFrame
+    missing_columns = [col for col in numerical_cols if col not in som_df.columns]
+    if missing_columns:
+        st.error(f"The following columns are missing from the uploaded data: {', '.join(missing_columns)}")
+        return  # Stop execution if required columns are missing
+    
     # Scale numerical columns
     scaler = MinMaxScaler()
-    numerical_cols = ['Year', 'NA_Sales', 'EU_Sales', 'JP_Sales', 'Other_Sales', 'Global_Sales', 'Game_Age_Years']
     som_df[numerical_cols] = scaler.fit_transform(som_df[numerical_cols])
 
     # Apply PCA to reduce dimensions
@@ -103,7 +111,7 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
     # Drop unnecessary columns
-    som_df = df.drop(columns=['Name', 'Rank'])
+    som_df = df.drop(columns=['Name', 'Rank'], errors='ignore')
 
     # Display the first few rows of the DataFrame
     st.write("Here are the first few rows of your file:")
