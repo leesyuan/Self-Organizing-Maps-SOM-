@@ -11,6 +11,8 @@ from datetime import date
 
 # Function to run SOM clustering
 def run_som(som_df, som_size, learning_rate, num_iterations):
+    som_df['Year'] = som_df['Year'].fillna(som_df['Year'].median())  # Fill missing Year with median
+    som_df['Publisher'] = som_df['Publisher'].fillna('Unknown')  # Fill missing Publisher with 'Unknown'
     # Add Game_Age_Years if it's missing
     if 'Game_Age_Years' not in som_df.columns and 'Year' in som_df.columns:
         som_df['Game_Age_Years'] = date.today().year - som_df['Year']
